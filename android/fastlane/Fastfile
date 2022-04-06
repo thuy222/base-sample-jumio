@@ -1,0 +1,54 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+package = load_json(json_path: "../package.json")
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Submit a new Beta Build to Crashlytics Beta"
+  lane :beta do
+    gradle(task: "clean assembleRelease")
+    crashlytics
+  
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    gradle(task: "clean assembleRelease")
+    upload_to_play_store
+  end
+
+  lane :internal do
+    gradle(task: "clean") # run the task clean
+    increment_version_code(version_code: package['build'].to_i) # Increment the build number of the application
+    android_set_version_name(version_name: package['version'])
+    gradle(task: "assembleRelease") # compile a release bundle application app.aab
+    aws_s3(
+        access_key: ENV["AWS_S3_ACCESS_KEY"],
+        secret_access_key: ENV["AWS_S3_SECRET_KEY"],
+        bucket: ENV["AWS_S3_BUCKET_NAME"],
+        region: ENV["AWS_S3_REGION"],
+        apk: File.expand_path("../app/build/outputs/apk/release/app-release.apk", Dir.pwd),
+        app_directory: ENV["AWS_S3_AND_FLD"]
+    )
+  end
+end

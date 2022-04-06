@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "555851306721",
+    "project_id": "fusangmobilepoc",
+    "storage_bucket": "fusangmobilepoc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555851306721:android:efacdd7d85bd8f4e4dc9a0",
+        "android_client_info": {
+          "package_name": "co.fusang.mobile.poc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "555851306721-b9fgl058qn20f93hc7ea2t2gndm883sj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.fusang.mobile.poc",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "555851306721-cr3amsij96bhhn2sfdakb71v256hjtam.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.fusang.mobile.poc",
+            "certificate_hash": "608ec10c72cc2d521bd818a89e907c006ac8ab62"
+          }
+        },
+        {
+          "client_id": "555851306721-87ojo22ci17t4h0cmi2dnp32lkjoib62.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdFUoOBEMXYlw1JsBplQb4Okme6HBs0RU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "555851306721-87ojo22ci17t4h0cmi2dnp32lkjoib62.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "555851306721-k4jgrtkj8dd9vauo6cgik5nc218pcu6o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.fusang.mobile.poc",
+                "app_store_id": "1609027166"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

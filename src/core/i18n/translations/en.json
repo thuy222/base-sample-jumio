@@ -1,0 +1,12 @@
+{
+  "newUpdateAvailable": "New Update Available",
+  "forceUpdateMessage": "Please update your apps(please click any button)",  
+  "nonForceUpdateMessage": "You may skip this update(please click any button)",
+  "update": "Update",
+  "skip": "Skip",
+  "username": "User Name",
+  "password": "Password",
+  "register": "Register",
+  "submit": "Submit"
+
+}

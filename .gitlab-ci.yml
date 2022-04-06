@@ -1,0 +1,179 @@
+stages: #used to define stages that can be used by jobs and is defined globally
+  - version
+  - deployIOS
+  - deployAndroid
+
+variables: #Set up environment values
+  LC_ALL: "en_US.UTF-8"
+  LANG: "en_US.UTF-8"
+  GIT_STRATEGY: clone
+
+before_script: #Override a set of commands that are executed before job.
+  - npm install #install node_modules for RN project
+
+.prepare_ios_step: &prepare_ios_step
+  - cd ios/
+  - pod install
+.prepare_android_step: &prepare_android_step
+  - npx jetify
+  - cd android/
+
+revision:
+  stage: version
+  tags: #tag registered with gitlab-runner
+    - ios
+  script:
+    - git remote set-url origin https://gitlab-ci-token:${GITLAB_TOKEN}@gitlab.fusang.co/$CI_PROJECT_PATH.git
+    - git config user.email $GIT_CI_USER
+    - git config user.name $GIT_CI_USERNAME
+    - git checkout $CI_COMMIT_REF_NAME
+    - git describe --abbrev=0 --tags
+    - git pull origin $CI_COMMIT_REF_NAME
+    - yarn install --ignore-optional
+    - yarn semantic-release | tee ./semantic-release.log
+    - grep -q 'Published release ' ./semantic-release.log
+  only:
+    refs:
+      - master
+      - develop
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /Merge\sbranch\s'FSM-.*|develop|master'\sinto\s'develop|master'/
+
+
+deployIOS-qa:
+  stage: deployIOS
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+  script: #scrip when work with current state
+    - *prepare_ios_step
+    - fastlane adhoc
+  tags: #tag registered with gitlab-runner
+    - ios
+  environment:
+    name: qa
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master" && $CI_COMMIT_MESSAGE =~ /FSM-000/
+      when: always
+      
+
+deployIOS-qa2:
+  stage: deployIOS
+  script: #scrip when work with current state
+    - *prepare_ios_step
+    - fastlane adhoc
+  tags: #tag registered with gitlab-runner
+    - ios
+  environment:
+    name: qa2
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /FSM-000/
+      when: always
+
+deployIOS-uat:
+  stage: deployIOS
+  script: #scrip when work with current state
+    - *prepare_ios_step
+    - fastlane beta
+  tags: #tag registered with gitlab-runner
+    - ios
+  environment:
+    name: uat
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master" && $CI_COMMIT_MESSAGE =~ /FSM-000/
+      when: manual
+
+deployIOS-uat2:
+  stage: deployIOS
+  script: #scrip when work with current state
+    - *prepare_ios_step
+    - fastlane beta
+  tags: #tag registered with gitlab-runner
+    - ios
+  environment:
+    name: uat2
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /FSM-000/
+      when: manual
+
+deployIOS-production:
+  stage: deployIOS
+  script: #scrip when work with current state
+    - *prepare_ios_step
+    - fastlane production
+  tags: #tag registered with gitlab-runner
+    - ios
+  environment:
+    name: production
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master" && $CI_COMMIT_MESSAGE =~ /FSM-000/
+      when: manual
+
+
+deployAndroid-qa:
+  stage: deployAndroid
+  script: #scrip when work with current state
+    - *prepare_android_step
+    - fastlane internal
+  tags: #tag registered with gitlab-runner
+    - ios
+  environment:
+    name: qa
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master" && $CI_COMMIT_MESSAGE =~ /FSM-000/
+      when: always
+
+deployAndroid-qa2:
+  stage: deployAndroid
+  script: #scrip when work with current state
+    - *prepare_android_step
+    - fastlane internal
+  tags: #tag registered with gitlab-runner
+    - ios
+  environment:
+    name: qa2
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /FSM-000/
+      when: always
+
+deployAndroid-uat:
+  stage: deployAndroid
+  script: #scrip when work with current state
+    - *prepare_android_step
+    - fastlane internal
+  tags: #tag registered with gitlab-runner
+    - android
+  environment:
+    name: uat
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master" && $CI_COMMIT_MESSAGE =~ /FSM-000/
+      when: manual
+
+deployAndroid-uat2:
+  stage: deployAndroid
+  script: #scrip when work with current state
+    - *prepare_android_step
+    - fastlane internal
+  tags: #tag registered with gitlab-runner
+    - android
+  environment:
+    name: uat2
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /FSM-000/
+      when: manual
+
+deployAndroid-production:
+  stage: deployAndroid
+  script: #scrip when work with current state
+    - *prepare_android_step
+    - fastlane uploadAPK #TODO change to google play store when google developer account is ready
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+  tags: #tag registered with gitlab-runner
+    - ios
+  environment:
+    name: production
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master" && $CI_COMMIT_MESSAGE =~ /FSM-000/
+      when: manual

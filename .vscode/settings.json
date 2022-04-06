@@ -1,0 +1,19 @@
+{
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+  "eslint.enable": true,
+  "eslint.alwaysShowStatus": true,
+  "editor.parameterHints": false,
+  "javascript.validate.enable": true,
+  "prettier.trailingComma": "none",
+  "prettier.semi": false,
+  "prettier.singleQuote": true,
+  "editor.tabSize": 2,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "cSpell.words": [
+    "Formik"
+  ]
+}
